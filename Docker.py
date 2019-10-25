@@ -5,6 +5,13 @@ import sys
 
 
 class Docker:
+    """'Docker' object 
+    - new Containers = Docker( list names, str network=None, dict options=None, dict commands=None)
+        - names: e.g. ["mysql",...] -> there has to be Dockerfile with the same name or the image in Docker repo
+        - network: e.g. "some_net"
+        - options: e.g. { "container1":f" -i -e MYSQL_DATABASE=somedb --net={network} -p 9000:3306", "container2": ...}
+        - commands: e.g. { "container1":f"ls -las /home" }
+    """
     def __init__(self, names, network=None, options=None, commands=None):
         self.names = names
         self.options = (
@@ -20,34 +27,36 @@ class Docker:
         [print(var) for var in [self.names, self.options, self.network, self.commands]]
 
     def rm_network(self):
-        comms = ["docker network rm " + self.network]
+        comms = [f"docker network rm {self.network}"]
         return [os.system(comm) if self.network is not None else False for comm in comms]
 
     def create_network(self):
-        comms = ["docker network create " + self.network]
+        comms = [f"docker network create {self.network}"]
         return [os.system(comm) if self.network is not None else False for comm in comms]
 
     def stop_containers(self):
-        comms = ["docker stop " + name for name in self.names]
+        comms = [f"docker stop {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
     def remove_containers(self):
-        comms = ["docker rm " + name for name in self.names]
+        comms = [f"docker rm {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
     def remove_images(self):
-        comms = ["docker rmi " + name for name in self.names]
+        comms = [f"docker rmi {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
     def build_images(self):
+        # check if the dcokerfile is there, otherwise it will pull from repo
         comms = [
-            "docker build -t " + name + ":latest -f  " + name + ".Dockerfile ."
+            f"docker build -t {name}:latest -f  {name}.Dockerfile ." if os.path.isfile(f"{name}.Dockerfile") 
+            else f"echo \"\'{name}.Dockerfile\' doesn\'t exist, the \'{name}:latest\' will be downloaded from Docker repo in the docker run step"
             for name in self.names
         ]
         return [os.system(comm) for comm in comms]
 
     def start_containers(self):
-        comms = ["docker start " + name for name in self.names]
+        comms = [f"docker start {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
     def run_containers(self):

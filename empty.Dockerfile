@@ -1,1 +1,3 @@
-FROM scratch:latest
+FROM alpine:latest
+
+RUN echo Hello world
