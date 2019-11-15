@@ -18,5 +18,4 @@ RUN touch "/etc/timezone" && \
     ln -sf "/usr/share/zoneinfo/$TZ" /etc/localtime && \
     echo "$TZ" > /etc/timezone
 
-
 RUN echo Hello world
