@@ -17,16 +17,16 @@ dict_commands = {
 
 container = Docker(list(dict_options.keys()), network, dict_options, dict_commands)
 container.stop_containers()
-container.remove_containers()
-container.remove_images()
+container.rm_containers()
+container.rm_images()
 container.rm_network()
-#ftpd_container.debug()
-#ftpd_container.restart_containers()
-#ftpd_container.stop_containers()
-#ftpd_container.remove_containers()
-#ftpd_container.run_containers()
+#container.debug()
+#container.restart_containers()
+#container.stop_containers()
+#container.rm_containers()
+#container.run_containers()
 #
-#ftpd_container.rebuild_container()
+#container.rebuild_containers()
 
 #[print("docker logs " + name) for name in dict_options.keys()]
 #[(print(f"\n\ndocker logs {name}\n\n"),os.system("docker logs " + name)) for name in dict_options.keys()]

@@ -38,11 +38,11 @@ class Docker:
         comms = [f"docker stop {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
-    def remove_containers(self):
+    def rm_containers(self):
         comms = [f"docker rm {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
-    def remove_images(self):
+    def rm_images(self):
         comms = [f"docker rmi {name}" for name in self.names]
         return [os.system(comm) for comm in comms]
 
@@ -86,14 +86,14 @@ class Docker:
 
     def restart_containers(self):
         self.stop_containers()
-        self.remove_containers()
+        self.rm_containers()
         self.run_containers()
 
-    def rebuild_container(self):
+    def rebuild_containers(self):
         self.stop_containers()
-        self.remove_containers()
+        self.rm_containers()
         self.rm_network()
-        self.remove_images()
+        self.rm_images()
         self.build_images()
         self.create_network()
         self.run_containers()
