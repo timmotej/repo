@@ -18,3 +18,6 @@ container.rebuild_containers()
 
 print("\n\nStatus of docker containers:\n\n")
 os.system("docker ps -a")
+[print(f"docker IP address {name}:") for name in dict_options.keys()] 
+[(print(f"\ndocker inspect {name} | grep -v '\"\"' | grep 'IPAddress\"'\n"),os.system(f"docker inspect {name} | grep -v '\"\"' | grep 'IPAddress\"'")) for name in dict_options.keys()] 
+
