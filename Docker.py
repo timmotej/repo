@@ -6,13 +6,14 @@ import sys
 
 class Docker:
     """'Docker' object 
-    - new Containers = Docker( list names, str network=None, dict options=None, dict commands=None)
+    - new Containers = Docker( list names, str network=None, dict options=None, dict commands=None, str dockerfile_suffix=None)
         - names: e.g. ["mysql",...] -> there has to be Dockerfile with the same name or the image in Docker repo
         - network: e.g. "some_net"
         - options: e.g. { "container1":f" -i -e MYSQL_DATABASE=somedb --net={network} -p 9000:3306", "container2": ...}
         - commands: e.g. { "container1":f"ls -las /home" }
+        - dockerfile_suffix: added string to Dockerfile from which to start, e.g. if you want to start from {name}-debug.Dockerfile then set to "-debug"
     """
-    def __init__(self, names, network=None, options=None, commands=None):
+    def __init__(self, names, network=None, options=None, commands=None, dockerfile_suffix=None):
         self.names = names
         self.options = (
             {name:"" for name in self.names} if (options is None or not isinstance(options, dict)) else options
@@ -22,6 +23,7 @@ class Docker:
             {name:"" for name in self.names} if (commands is None or not isinstance(options, dict)) else 
                 {name:commands[name] if name in list(commands.keys()) else "" for name in self.names} 
         )
+        self.dockerfile_suffix = dockerfile_suffix if dockerfile_suffix else ""
 
     def debug(self):
         [print(var) for var in [self.names, self.options, self.network, self.commands]]
@@ -47,10 +49,10 @@ class Docker:
         return [os.system(comm) for comm in comms]
 
     def build_images(self):
-        # check if the dcokerfile is there, otherwise it will pull from repo
+        # check if the dockerfile is there, otherwise it will pull from repo
         comms = [
-            f"docker build -t {name}:latest -f  {name}.Dockerfile ." if os.path.isfile(f"{name}.Dockerfile") 
-            else f"echo \"\'{name}.Dockerfile\' doesn\'t exist, the \'{name}:latest\' will be downloaded from Docker repo in the docker run step"
+            f"docker build -t {name}:latest -f  {name}{self.dockerfile_suffix}.Dockerfile ." if os.path.isfile(f"{name}{self.dockerfile_suffix}.Dockerfile") 
+            else f"echo \"\'{name}{self.dockerfile_suffix}.Dockerfile\' doesn\'t exist, the \'{name}:latest\' will be downloaded from Docker repo in the docker run step"
             for name in self.names
         ]
         return [os.system(comm) for comm in comms]

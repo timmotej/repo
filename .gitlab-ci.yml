@@ -12,6 +12,7 @@ build-empty:
   script:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-')
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+    - docker build $DOCKER_BUILD_PARAMS --pull -t "${CI_REGISTRY_IMAGE}/empty-debug:$IMAGE_TAG" --file empty-debug.Dockerfile .
     - docker build $DOCKER_BUILD_PARAMS --pull -t "${CI_REGISTRY_IMAGE}/empty:$IMAGE_TAG" --file empty.Dockerfile .
 
 publish:
@@ -20,4 +21,5 @@ publish:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-')
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
     - echo $IMAGE_TAG
+    - docker push "${CI_REGISTRY_IMAGE}/empty-debug:$IMAGE_TAG"
     - docker push "${CI_REGISTRY_IMAGE}/empty:$IMAGE_TAG"

@@ -9,7 +9,13 @@ dict_options = {
     "empty": f" -it --net={network} -e UNAME=tom -e GNAME=mygroup ",
 }
 
-container = Docker(list(dict_options.keys()), network, dict_options)
+commands = {
+    "empty": f"",
+}
+
+dockerfile="-debug"
+
+container = Docker(list(dict_options.keys()), network, dict_options, commands, dockerfile)
 
 container.rebuild_containers()
 
