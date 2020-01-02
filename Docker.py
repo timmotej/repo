@@ -78,7 +78,7 @@ class Docker:
         comms = [
             f"docker stop {name}{str(no_container+1) if bool(self.no_containers[name]) else ''}"
             for name in self.names
-            for no_container in range(self.no_containers[name])
+            for no_container in range(self.no_containers[name]+1)
         ]
         return [os.system(comm) for comm in comms]
 
@@ -86,7 +86,7 @@ class Docker:
         comms = [
             f"docker rm {name}{str(no_container+1) if bool(self.no_containers[name]) else ''}"
             for name in self.names
-            for no_container in range(self.no_containers[name])
+            for no_container in range(self.no_containers[name]+1)
         ]
         return [os.system(comm) for comm in comms]
 
@@ -113,7 +113,7 @@ class Docker:
             # if there are more containers needed to deploy, there will be run with numbers name{1,...,n}
             f"docker run -d --name {name}{str(no_container+1) if bool(self.no_containers[name]) else ''} {self.options[name]}  {name} {self.commands[name]}"
             for name in self.names
-            for no_container in range(self.no_containers[name])
+            for no_container in range(self.no_containers[name]+1)
         ]
         [print(comm) for comm in comms]
         return [os.system(comm) for comm in comms]
@@ -128,7 +128,7 @@ class Docker:
 
     def run_command(self, dict_comm):
         comms = [
-            f'docker exec -it {name} sh -c " {dict_comm[name]} "' for name in self.names
+            f'docker exec -it {name} sh -c " {dict_comm[name]} "' for name in dict_comm.keys()
         ]
         [print(comm) for comm in comms]
         return [os.system(comm) for comm in comms]
