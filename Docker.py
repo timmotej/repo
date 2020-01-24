@@ -40,10 +40,10 @@ class Docker:
             }
         )
         self.no_containers = (
-            {name: 0 for name in self.names}
+            {name: 1 for name in self.names}
             if (no_containers is None or not isinstance(no_containers, dict))
             else {
-                name: no_containers[name] if name in list(no_containers.keys()) else 0
+                name: no_containers[name] if name in list(no_containers.keys()) else 1
                 for name in self.names
             }
         )
@@ -76,17 +76,17 @@ class Docker:
 
     def stop_containers(self):
         comms = [
-            f"docker stop {name}{str(no_container+1) if bool(self.no_containers[name]) else ''}"
+            f"docker stop {name}{str(no_container+1) if (self.no_containers[name] > 1) else ''}"
             for name in self.names
-            for no_container in range(self.no_containers[name]+1)
+            for no_container in range(self.no_containers[name])
         ]
         return [os.system(comm) for comm in comms]
 
     def rm_containers(self):
         comms = [
-            f"docker rm {name}{str(no_container+1) if bool(self.no_containers[name]) else ''}"
+            f"docker rm {name}{str(no_container+1) if (self.no_containers[name] > 1) else ''}"
             for name in self.names
-            for no_container in range(self.no_containers[name]+1)
+            for no_container in range(self.no_containers[name])
         ]
         return [os.system(comm) for comm in comms]
 
@@ -111,9 +111,9 @@ class Docker:
     def run_containers(self):
         comms = [
             # if there are more containers needed to deploy, there will be run with numbers name{1,...,n}
-            f"docker run -d --name {name}{str(no_container+1) if bool(self.no_containers[name]) else ''} {self.options[name]}  {name} {self.commands[name]}"
+            f"docker run -d --name {name}{str(no_container+1) if (self.no_containers[name] > 1) else ''} {self.options[name]}  {name} {self.commands[name]}"
             for name in self.names
-            for no_container in range(self.no_containers[name]+1)
+            for no_container in range(self.no_containers[name])
         ]
         [print(comm) for comm in comms]
         return [os.system(comm) for comm in comms]
@@ -128,7 +128,8 @@ class Docker:
 
     def run_command(self, dict_comm):
         comms = [
-            f'docker exec -it {name} sh -c " {dict_comm[name]} "' for name in dict_comm.keys()
+            f'docker exec -it {name} sh -c " {dict_comm[name]} "'
+            for name in dict_comm.keys()
         ]
         [print(comm) for comm in comms]
         return [os.system(comm) for comm in comms]

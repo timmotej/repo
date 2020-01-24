@@ -13,10 +13,19 @@ commands = {
     "empty": f"",
 }
 
+no_containers = {
+    "empty": 1,
+}
+
 dockerfile = "-debug"
 
 container = Docker(
-    list(dict_options.keys()), network, dict_options, commands, dockerfile
+    list(dict_options.keys()),
+    network,
+    dict_options,
+    commands,
+    dockerfile,
+    no_containers,
 )
 
 container.rebuild_containers()
