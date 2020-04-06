@@ -2,14 +2,14 @@ FROM alpine:latest
 
 ENV GID=1001 \
     GNAME=group \
-    URID=1001 \
-    URNAME=user
+    UID=1001 \
+    UNAME=user
 
 # set -x: print commands and their outputs
 RUN set -x && \
     apk --update add bash vim tzdata && \
     addgroup -g $GID -S $GNAME && \
-    adduser -S -D -H -u $URID -h $HOME -s /sbin/nologin -G $GNAME -g $GNAME $URNAME && \
+    adduser -S -D -H -u $UID -h $HOME -s /sbin/nologin -G $GNAME -g $GNAME $UNAME && \
     unlink /usr/bin/env && \
     unlink /usr/bin/top && \
     unlink /bin/ps && \
